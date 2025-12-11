@@ -1,0 +1,67 @@
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws" version = "~> 5.0" }
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+}
+
+locals {
+  use_existing_vpc = var.vpc_id != ""
+}
+
+resource "aws_subnet" "lab_subnet" {
+  count                   = local.use_existing_vpc ? 1 : 0
+  vpc_id                  = var.vpc_id
+  cidr_block              = cidrsubnet("10.0.0.0/16", 8, 1) # e.g., 10.0.1.0/24
+  map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_region}a"
+
+  tags = {
+    Name = "lab-existingvpc-subnet"
+  }
+}
+
+resource "aws_internet_gateway" "lab_igw" {
+  count  = local.use_existing_vpc ? 1 : 0
+  vpc_id = var.vpc_id
+
+  tags = { Name = "lab-existingvpc-igw" }
+}
+
+resource "aws_route_table" "lab_rt" {
+  count  = local.use_existing_vpc ? 1 : 0
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.lab_igw[0].id
+  }
+
+  tags = { Name = "lab-existingvpc-rt" }
+}
+
+resource "aws_route_table_association" "lab_rta" {
+  count = local.use_existing_vpc ? 1 : 0
+  subnet_id      = aws_subnet.lab_subnet[0].id
+  route_table_id = aws_route_table.lab_rt[0].id
+}
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  filter { name = "name"  values = ["amzn2-ami-hvm-*-x86_64-gp2"] }
+  owners = ["137112412989"]
+}
+
+resource "aws_instance" "lab_instance" {
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.lab_subnet[0].id
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "lab-instance-existingVPC"
+  }
+}
