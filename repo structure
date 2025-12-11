@@ -1,0 +1,21 @@
+terraform-labs/
+├─ lab1-terraform-setup/
+│  └─ README-Lab1.md
+├─ lab2-s3-bucket/
+│  ├─ main.tf
+│  ├─ variables.tf
+│  ├─ terraform.tfvars
+│  └─ outputs.tf
+├─ lab3-variables-outputs/
+│  ├─ main.tf
+│  ├─ variables.tf
+│  ├─ terraform.tfvars
+│  └─ outputs.tf
+├─ lab4-vpc-ec2/
+│  ├─ README-Lab4.md
+│  ├─ main_existing_vpc.tf        # variant A: use existing VPC (creates subnet, IGW, RT, EC2)
+│  ├─ main_create_vpc.tf          # variant B: create VPC + subnet + IGW + EC2 (self-contained)
+│  ├─ variables.tf
+│  ├─ terraform.tfvars.example
+│  └─ outputs.tf
+└─ README.md
