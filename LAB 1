@@ -1,0 +1,15 @@
+
+---
+
+# **Lab 1 — `lab1-terraform-setup/README-Lab1.md`**
+
+```markdown
+# Lab 1 — Terraform Installation & Setup
+
+## Steps
+
+1. **Download Terraform**: Get the appropriate version for your OS from [Terraform Downloads](https://developer.hashicorp.com/terraform/downloads).
+2. **Add Terraform to PATH**: Ensure the `terraform` executable is accessible from your terminal.
+3. **Verify Installation**:
+   ```bash
+   terraform -v
